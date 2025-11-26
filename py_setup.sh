@@ -32,12 +32,38 @@ fi
 
 if [ ! -d "$VENV_DIR" ]; then
     echo "Creating virtual environment in '$VENV_DIR'..."
-    python3 -m venv "$VENV_DIR"
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to create virtual environment."
-        exit 1
+    
+    # 1. Try standard creation
+    if python3 -m venv "$VENV_DIR"; then
+        echo "Virtual environment created successfully."
+    else
+        echo "Standard creation failed (likely missing python3-venv)."
+        echo "Attempting to create without pip..."
+        
+        # 2. Create venv WITHOUT pip
+        python3 -m venv "$VENV_DIR" --without-pip
+        
+        # 3. Manually install pip
+        echo "Downloading and installing pip manually..."
+        source "$VENV_DIR/bin/activate"
+        
+        # Download get-pip.py using curl or wget
+        if command -v curl &> /dev/null; then
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        elif command -v wget &> /dev/null; then
+            wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
+        else
+            echo "Error: Neither curl nor wget found. Cannot install pip."
+            exit 1
+        fi
+        
+        # Run the pip installer
+        python get-pip.py
+        rm get-pip.py
+        
+        # Deactivate to allow the main script to reactivate properly later
+        deactivate
     fi
-    echo "Virtual environment created successfully."
 fi
 echo ""
 
@@ -69,7 +95,7 @@ if [ -f "requirements.txt" ]; then
 else
     echo "Warning: requirements.txt not found."
     echo "Installing common packages manually..."
-    pip install torch numpy pandas scikit-learn scipy matplotlib
+    pip install numpy pandas matplotlib
 fi
 echo ""
 

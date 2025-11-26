@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments (Crucial!)
+venv/
+env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Environment variables (Safety risk!)
+.env
+
+# Large files/Data (Adjust based on your coursework)
+*.csv
+*.dat
+*.zip
+*.tar.gz
+*.pkl
+/data/
+/models/
